@@ -8,6 +8,7 @@ First, include the RemoteControl library and create an instance of the RemoteCon
 RemoteControl control;
 ```
 
+## I/O pins
 To control an I/O pin, first use the ```control``` method in setup() to register the I/O pin:
 ```cpp
 control.pin("LED", LED_BUILTIN, OUTPUT);
@@ -24,6 +25,7 @@ To read the I/O pin, send a command with just the pin name. For example:
 LED
 ```
 
+## Variables
 To control a variable, first declare the variable and then use the ```control``` method in setup() to register the variable:
 ```cpp
 int myVar;
@@ -35,7 +37,7 @@ To set the variable, send a command with the variable name, an equal sign, and a
 myVar=99
 ```
 
-To read the variable, send a command with just the varible name. For example:
+To read the variable, send a command with just the variable name. For example:
 ```cpp
 myVar
 ```
@@ -45,6 +47,7 @@ You can combine multiple commands by separating commands with a semi-colon:
 LED=1;myVar=11;LED;
 ```
 
+## Processing incoming commands
 To process a command, use the ```handle``` method:
 ```cpp
 control.handle(command);
