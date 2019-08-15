@@ -1,5 +1,5 @@
 # RemoteControl
-A library for basic pin and variable control over communication links (Serial, WebSockets, etc.).
+An Arduino library for basic pin and variable control over communication links (Serial, WebSockets, etc.).
 
 # How to use
 First, include the RemoteControl library and create an instance of the RemoteControl class:
@@ -8,7 +8,7 @@ First, include the RemoteControl library and create an instance of the RemoteCon
 RemoteControl control;
 ```
 
-To control I/O pins and integer variables, use the ```control``` method in setup() to register the I/O pins and variables you want to control.
+To control I/O pins and integer variables, use the ```pin``` or ```variable``` methods in setup() to register the I/O pins and variables you want to control.
 
 ```cpp
 int myvar;
@@ -17,6 +17,7 @@ setup() {
    ... 
    control.pin("LED", LED_BUILTIN, OUTPUT);
    control.variable("myvar", &myvar);
+   ...
 }
 ```
 Here, we are going to control the LED_BUILTIN pin the the "myvar" variable. The LED_BUILTIN pin is assigned the name "LED" and is specified as an output pin. The RemoteControl library will set the pin mode as an output pin.
@@ -26,6 +27,7 @@ To process an incoming , use the ```handle``` method.
 loop() {
    ...
    control.handle(command);
+   ...
 }
 ```
 
