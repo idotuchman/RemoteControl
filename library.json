@@ -1,0 +1,13 @@
+{
+  "name": "RemoteControl",
+  "keywords": "Remote, Control, Variable, IO",
+  "description": "A library for Arduino to control variables and IO pins over streams, like Serial and WebSockets.",
+  "repository":
+  {
+    "type": "git",
+    "url": "https://github.com/idotuchman/RemoteControl"
+  },
+  "version": "0.0.1",
+  "frameworks": "arduino",
+  "platforms": "*"
+}
