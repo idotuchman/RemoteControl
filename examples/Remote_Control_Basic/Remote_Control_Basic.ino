@@ -1,7 +1,6 @@
 #include <RemoteControl.h>    // https://github.com/idotuchman/RemoteControl
 
 RemoteControl control;
-int incomingByte = 0; // for incoming serial data
 int myvar;
 
 void setup() {
