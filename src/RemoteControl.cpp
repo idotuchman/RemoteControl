@@ -22,7 +22,6 @@ void RemoteControl::variable(char* name, int *variable) {
     strcpy(_variableList[_variableListIndex].name, trim(name));
     _variableList[_variableListIndex].variable = variable;
     Serial.printf("New variable added: Name: %s\n", trim(name));
-    // Serial.printf("%i: %s = %i\n", _index, _variableNames[_index].c_str(), *_variablePointers[_index]);
     _variableListIndex++;
   } else {
     Serial.printf("Variable %s not controlled. Too many variables controlled.\n", name);

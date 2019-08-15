@@ -33,7 +33,7 @@ loop() {
 
 ## Command format
 
-To set the I/O pin, send a command with the pin name, an equal sign, and either 1 or 0. For example:
+To set an I/O pin, send a command with the pin name, an equal sign, and either 1 or 0. For example:
 ```cpp
 LED=1
 ```
