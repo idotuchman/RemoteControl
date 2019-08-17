@@ -25,7 +25,7 @@ setup() {
    ...
 }
 ```
-Above, we controlling the LED_BUILTIN pin, the "myvar" variable, and the function call to "mynameis". The LED_BUILTIN pin is assigned the name "LED" and is specified as an output pin. The RemoteControl library will set the pin mode as an output pin.
+Above, we are controlling the LED_BUILTIN pin, the "myvar" variable, and the function call to "mynameis". The LED_BUILTIN pin is assigned the name "LED" and is specified as an output pin. The RemoteControl library will set the pin mode as an output pin.
 
 To process an incoming , use the ```handle``` method.
 ```cpp
@@ -38,7 +38,7 @@ loop() {
 
 ## I/O Pins
 
-To set an I/O pin, send a command with the pin name, an equal sign, and either 1 or 0. For example:
+The RemoteControl library will set the pin mode as either input or output depending on whether you specify INPUT or OUTPUT in the pin method. To set an I/O pin, send a command with the pin name, an equal sign, and either 1 or 0. For example:
 ```cpp
 LED=1
 ```
@@ -65,7 +65,7 @@ Functions must return a ```String``` and receive only a character string (```cha
 To call a function, send the function name with the character string in parenthesis. For example, ```functionName(argument)```.
 
 ### Multiple Commands
-You can combine multiple commands by separating commands with a semi-colon:
+You can combine multiple commands by separating commands with semicolons (;):
 ```cpp
 LED=1;myVar=11;mynameis(Bob);
 ```
