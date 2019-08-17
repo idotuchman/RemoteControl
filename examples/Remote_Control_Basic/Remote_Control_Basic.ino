@@ -3,6 +3,10 @@
 RemoteControl control;
 int myvar;
 
+String mynameis(char *arg) {
+  return "Hello " + String(arg) + "!\n";
+}
+
 void setup() {
   Serial.begin(115200);         // Start the Serial communication to send messages to the computer
   delay(10);
@@ -10,6 +14,7 @@ void setup() {
 
   control.pin("LED", LED_BUILTIN, OUTPUT);
   control.variable("myvar", &myvar);
+  control.function("mynameis", &mynameis);
 }
 
 void loop() {

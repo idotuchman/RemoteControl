@@ -32,8 +32,9 @@
 #include <Arduino.h>
 
 const int MAX_NAME_LENGTH = 20;
-const int MAX_PINS_CONTROLLED = 10;
+const int MAX_PINS_CONTROLLED = 20;
 const int MAX_VARIABLES_CONTROLLED = 10;
+const int MAX_FUNCTIONS_CONTROLLED = 10;
 
 class RemoteControl
 {
@@ -41,10 +42,16 @@ class RemoteControl
     RemoteControl();
     void pin(char* name, int pinNumber, bool ouput);
     void variable(char* name, int *variable);
+    void variable(char* name, float *variable);
+    void function(char* name, String (*function)(char* arg));
     String handle(char* message);
     //void getVariables(void);    //TODO returns a structure of variables and values
 
   private:
+    String _processFunction(char *functionName, char *arg);
+    String _processCommand(char* command);
+    char *trim(char *str);
+
   // holds all I/O pins controlled remotely
     struct {
       char name[MAX_NAME_LENGTH];
@@ -58,13 +65,14 @@ class RemoteControl
       char name[MAX_NAME_LENGTH];
       int *variable;
     } _variableList[MAX_VARIABLES_CONTROLLED];
-    int _variableListIndex = 0;    
-    
-    String _processCommand(char* command);
-    char *trim(char *str);
-    int _index = 0;
-    String _variableNames[10];    // max of 10 variables
-    int *_variablePointers[10];
+    int _variableListIndex = 0;
+
+  // holds all fuctions controlled remotely
+    struct {
+      char name[MAX_NAME_LENGTH];
+      String (*function)(char*);
+    } _functionList[MAX_FUNCTIONS_CONTROLLED];
+    int _functionListIndex = 0;
 };
 
 #endif

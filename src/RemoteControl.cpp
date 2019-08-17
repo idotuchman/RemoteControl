@@ -9,45 +9,75 @@ void RemoteControl::pin(char* name, int pinNumber, bool output) {
     _pinList[_pinListIndex].pinNumber = pinNumber;
     _pinList[_pinListIndex].output = output;
     output ? pinMode(pinNumber, OUTPUT) : pinMode(pinNumber, INPUT);
-    Serial.printf("New pin added: Name: %s, Pin: %i, Output: %s\n", _pinList[_pinListIndex].name, _pinList[_pinListIndex].pinNumber, _pinList[_pinListIndex].output ? "true" : "false");
+    Serial.printf("%s pin added to RemoteControl.\n", _pinList[_pinListIndex].name, _pinList[_pinListIndex].pinNumber, _pinList[_pinListIndex].output ? "true" : "false");
     _pinListIndex++;
   } else {
     Serial.printf("Pin %s not controlled. Too many pins controlled.", name);
   }
 }
 
-void RemoteControl::variable(char* name, int *variable) {
+void RemoteControl::variable(char *name, int *variable) {
   if (_variableListIndex < MAX_VARIABLES_CONTROLLED) {
     // TODO check if name already used
     strcpy(_variableList[_variableListIndex].name, trim(name));
     _variableList[_variableListIndex].variable = variable;
-    Serial.printf("New variable added: Name: %s\n", trim(name));
+    Serial.printf("%s variable added to RemoteControl.\n", trim(name));
+    // Serial.printf("%i: %s = %i\n", _index, _variableNames[_index].c_str(), *_variablePointers[_index]);
     _variableListIndex++;
   } else {
     Serial.printf("Variable %s not controlled. Too many variables controlled.\n", name);
   }
 }
 
-String RemoteControl::handle(char* message) {
-  char* command;
+void RemoteControl::variable(char *name, float *variable) {
+  Serial.printf("%s is a float variable. Floats are not yet supported.\n", name);
+}
+
+void RemoteControl::function(char *name, String (*function)(char *arg)) {
+  if (_functionListIndex < MAX_FUNCTIONS_CONTROLLED) {
+    // TODO check if name already used
+    strcpy(_functionList[_functionListIndex].name, trim(name));
+    _functionList[_functionListIndex].function = function;
+    Serial.printf("%s function added to RemoteControl.\n", trim(name));
+    // Serial.printf("%i: %s = %i\n", _index, _variableNames[_index].c_str(), *_variablePointers[_index]);
+    _functionListIndex++;
+  } else {
+    Serial.printf("Function %s not controlled. Too many functions controlled.\n", name);
+  }
+}
+
+String RemoteControl::handle(char *message) {
+  char *command;
   String response = "";
   command = strtok(message, ";");       // look for commands delimited with semi-colons
   while( command != NULL) {
     response += _processCommand(command);
     command = strtok(NULL, ";");
-  }
+  } 
   return response;
 }
 
-String RemoteControl::_processCommand(char* command) {
+String RemoteControl::_processCommand(char *command) {
   String response = "";
-  char* assign;
+  char *param, *temp;
   int value = 0;
 
-  assign = strchr(command, '=');    // check if an assignment command
-  if (assign != NULL) {
-    *assign = '\0';                 // if this is an assignment operation, command holds name
-    value = atoi(trim(++assign));
+  param = strchr(command, '(');    // check if command is a function call by looking for an open parenthesis
+  if (param != NULL) {
+    *param = '\0';                 // if this is an assignment operation, command holds function name    
+    trim(command);
+    temp = strchr(++param, ')');  // look for a close parenthesis of the function call
+    if (temp != NULL) {
+      *temp = '\0';
+      return _processFunction(command, param);
+    }
+    return String(command) + " " + String(param) + ": Invalid function call.\n";    // if no close parenthesis found, it's an invalid function call
+  }
+
+  param = strchr(command, '=');    // check if command is an assignment by looking for an equal sign
+  if (param != NULL) {
+    *param = '\0';                 // if this is an assignment operation, command holds name of pin/variable
+    value = atoi(trim(++param));
   }
   trim(command);
 
@@ -55,7 +85,7 @@ String RemoteControl::_processCommand(char* command) {
   for (int i=0; i < _pinListIndex; i++) {
     if (strcmp(command, _pinList[i].name) == 0) {
       // Pin match found
-      if(_pinList[i].output && assign!=NULL) {
+      if(_pinList[i].output && param != NULL) {
         digitalWrite(_pinList[i].pinNumber, value == 0? LOW : HIGH);
       } else {
         // pin match found, not an assignment, return pin value
@@ -68,8 +98,8 @@ String RemoteControl::_processCommand(char* command) {
   // check if command is in variables array
   for (int i=0; i < _variableListIndex; i++) {
     if (strcmp(command, _variableList[i].name) == 0) {
-      // Pin match found
-      if(assign!=NULL) {
+      // Variable match found
+      if(param != NULL) {
         *_variableList[i].variable = value;    // assign value to variable
       } else {
         // variable match found, not an assignment, return variable value
@@ -79,8 +109,20 @@ String RemoteControl::_processCommand(char* command) {
     }
   }  
 
-  Serial.printf("Command %s not found. Assignment %s. Value = %i.\n", command, assign!=NULL? "true" : "false", value);
+  Serial.printf("Command %s not found. Assignment %s. Value = %i.\n", command, param != NULL? "true" : "false", value);
   return response;
+}
+
+String RemoteControl::_processFunction(char *functionName, char *arg) {
+  // check if function name is in functions array
+  for (int i=0; i < _functionListIndex; i++) {
+    if (strcmp(functionName, _functionList[i].name) == 0) {
+      // function match found, call function and pass char argument
+      return _functionList[i].function(arg);
+    }
+  }
+  Serial.printf("Function %s not found.\n", functionName);
+  return "";
 }
 
 // https://stackoverflow.com/questions/122616/how-do-i-trim-leading-trailing-whitespace-in-a-standard-way
