@@ -1,5 +1,5 @@
 # RemoteControl
-An Arduino library for basic pin and variable control over communication links (Serial, WebSockets, etc.).
+An Arduino library for basic I/O pin, variable and function call control over communication links (Serial, WebSockets, etc.).
 
 # How to use
 First, include the RemoteControl library and create an instance of the RemoteControl class:
@@ -8,19 +8,24 @@ First, include the RemoteControl library and create an instance of the RemoteCon
 RemoteControl control;
 ```
 
-To control I/O pins and integer variables, use the ```pin``` or ```variable``` methods in setup() to register the I/O pins and variables you want to control.
+To control I/O pins, variables, and function calls, use the ```pin```, ```variable```, ```function``` methods respectively in setup(). For example,
 
 ```cpp
 int myvar;
+
+String mynameis(char *arg) {
+  return "Hello " + String(arg) + "!\n";
+}
 
 setup() {
    ... 
    control.pin("LED", LED_BUILTIN, OUTPUT);
    control.variable("myvar", &myvar);
+   control.function("mynameis", &mynameis);
    ...
 }
 ```
-Here, we are going to control the LED_BUILTIN pin the the "myvar" variable. The LED_BUILTIN pin is assigned the name "LED" and is specified as an output pin. The RemoteControl library will set the pin mode as an output pin.
+Above, we controlling the LED_BUILTIN pin, the "myvar" variable, and the function call to "mynameis". The LED_BUILTIN pin is assigned the name "LED" and is specified as an output pin. The RemoteControl library will set the pin mode as an output pin.
 
 To process an incoming , use the ```handle``` method.
 ```cpp
@@ -31,7 +36,7 @@ loop() {
 }
 ```
 
-## Command format
+## I/O Pins
 
 To set an I/O pin, send a command with the pin name, an equal sign, and either 1 or 0. For example:
 ```cpp
@@ -43,8 +48,8 @@ To read the I/O pin, send a command with just the pin name. For example:
 LED
 ```
 
-
-To set the variable, send a command with the variable name, an equal sign, and an integer. For example:
+## Variables
+Currently, only ```int``` variables are controllable. To set the variable, send a command with the variable name, an equal sign, and an integer. For example:
 ```cpp
 myVar=99
 ```
@@ -54,7 +59,13 @@ To read the variable, send a command with just the variable name. For example:
 myVar
 ```
 
+## Functions
+Functions must return a ```String``` and receive only a character string (```char *arg```) argument.
+
+To call a function, send the function name with the character string in parenthesis. For example, ```functionName(argument)```.
+
+### Multiple Commands
 You can combine multiple commands by separating commands with a semi-colon:
 ```cpp
-LED=1;myVar=11;LED;
+LED=1;myVar=11;mynameis(Bob);
 ```
