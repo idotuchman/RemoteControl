@@ -27,7 +27,7 @@ setup() {
 ```
 Above, we are controlling the LED_BUILTIN pin, the "myvar" variable, and the function call to "mynameis". The LED_BUILTIN pin is assigned the name "LED" and is specified as an output pin. The RemoteControl library will set the pin mode as an output pin.
 
-To process an incoming , use the ```handle``` method.
+To process an incoming command, use the ```handle``` method.
 ```cpp
 loop() {
    ...
@@ -60,7 +60,7 @@ myVar
 ```
 
 ## Functions
-Functions must return a ```String``` and receive only a character string (```char *arg```) argument.
+Functions must return a ```String``` and receive only a character string argument (```char *arg```).
 
 To call a function, send the function name with the character string in parenthesis. For example, ```functionName(argument)```.
 
