@@ -64,7 +64,7 @@ Functions must return a ```String``` and receive only a character string (```cha
 
 To call a function, send the function name with the character string in parenthesis. For example, ```functionName(argument)```.
 
-### Multiple Commands
+## Multiple Commands
 You can combine multiple commands by separating commands with semicolons (;):
 ```cpp
 LED=1;myVar=11;mynameis(Bob);
