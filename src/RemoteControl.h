@@ -35,16 +35,21 @@ const int MAX_NAME_LENGTH = 20;
 const int MAX_PINS_CONTROLLED = 20;
 const int MAX_VARIABLES_CONTROLLED = 10;
 const int MAX_FUNCTIONS_CONTROLLED = 10;
+enum Type {INT, FLOAT, CHAR, CHAR_ARRAY, STRING, BOOL };
 
 class RemoteControl
 {
   public: 
     RemoteControl();
     void pin(char* name, int pinNumber, bool ouput);
-    void variable(char* name, int *variable);
-    void variable(char* name, float *variable);
-    void function(char* name, String (*function)(char* arg));
-    String handle(char* message);
+    void variable(char *name, int *variable);
+    void variable(char *name, float *variable);
+    void variable(char *name, char *variable);
+    // void variable(char *name, char[] *variable);
+    void variable(char *name, String *variable);
+    void variable(char *name, bool *variable);
+    void function(char *name, String (*function)(char* arg));
+    String handle(char *message);
     //void getVariables(void);    //TODO returns a structure of variables and values
 
   private:
@@ -63,7 +68,8 @@ class RemoteControl
   // holds all int variables controlled remotely
     struct {
       char name[MAX_NAME_LENGTH];
-      int *variable;
+      void *variable;
+      Type type;
     } _variableList[MAX_VARIABLES_CONTROLLED];
     int _variableListIndex = 0;
 

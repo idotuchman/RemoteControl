@@ -2,6 +2,9 @@
 
 RemoteControl::RemoteControl() {}
 
+/**
+ * I/O PIN
+ **/
 void RemoteControl::pin(char* name, int pinNumber, bool output) {
   if (_pinListIndex < MAX_PINS_CONTROLLED) {
     // TODO check if name already used
@@ -16,12 +19,16 @@ void RemoteControl::pin(char* name, int pinNumber, bool output) {
   }
 }
 
+/**
+ * INT VARIABLE
+ **/
 void RemoteControl::variable(char *name, int *variable) {
   if (_variableListIndex < MAX_VARIABLES_CONTROLLED) {
     // TODO check if name already used
     strcpy(_variableList[_variableListIndex].name, trim(name));
     _variableList[_variableListIndex].variable = variable;
-    Serial.printf("%s variable added to RemoteControl.\n", trim(name));
+    _variableList[_variableListIndex].type = INT;
+    Serial.printf("Int %s variable added to RemoteControl.\n", trim(name));
     // Serial.printf("%i: %s = %i\n", _index, _variableNames[_index].c_str(), *_variablePointers[_index]);
     _variableListIndex++;
   } else {
@@ -29,10 +36,77 @@ void RemoteControl::variable(char *name, int *variable) {
   }
 }
 
+/**
+ * FLOAT VARIABLE
+ **/
 void RemoteControl::variable(char *name, float *variable) {
-  Serial.printf("%s is a float variable. Floats are not yet supported.\n", name);
+  if (_variableListIndex < MAX_VARIABLES_CONTROLLED) {
+    // TODO check if name already used
+    strcpy(_variableList[_variableListIndex].name, trim(name));
+    _variableList[_variableListIndex].variable = variable;
+    _variableList[_variableListIndex].type = FLOAT;
+    Serial.printf("Float %s variable added to RemoteControl.\n", trim(name));
+    // Serial.printf("%i: %s = %i\n", _index, _variableNames[_index].c_str(), *_variablePointers[_index]);
+    _variableListIndex++;
+  } else {
+    Serial.printf("Variable %s not controlled. Too many variables controlled.\n", name);
+  }
 }
 
+/**
+ * CHAR VARIABLE
+ **/
+void RemoteControl::variable(char *name, char *variable) {
+  if (_variableListIndex < MAX_VARIABLES_CONTROLLED) {
+    // TODO check if name already used
+    strcpy(_variableList[_variableListIndex].name, trim(name));
+    _variableList[_variableListIndex].variable = variable;
+    _variableList[_variableListIndex].type = CHAR;
+    Serial.printf("Char %s variable added to RemoteControl.\n", trim(name));
+    // Serial.printf("%i: %s = %i\n", _index, _variableNames[_index].c_str(), *_variablePointers[_index]);
+    _variableListIndex++;
+  } else {
+    Serial.printf("Variable %s not controlled. Too many variables controlled.\n", name);
+  }
+}
+
+/**
+ * STRING VARIABLE
+ **/
+void RemoteControl::variable(char *name, String *variable) {
+  if (_variableListIndex < MAX_VARIABLES_CONTROLLED) {
+    // TODO check if name already used
+    strcpy(_variableList[_variableListIndex].name, trim(name));
+    _variableList[_variableListIndex].variable = variable;
+    _variableList[_variableListIndex].type = STRING;
+    Serial.printf("String %s variable added to RemoteControl.\n", trim(name));
+    // Serial.printf("%i: %s = %i\n", _index, _variableNames[_index].c_str(), *_variablePointers[_index]);
+    _variableListIndex++;
+  } else {
+    Serial.printf("Variable %s not controlled. Too many variables controlled.\n", name);
+  }
+}
+
+/**
+ * BOOL VARIABLE
+ **/
+void RemoteControl::variable(char *name, bool *variable) {
+  if (_variableListIndex < MAX_VARIABLES_CONTROLLED) {
+    // TODO check if name already used
+    strcpy(_variableList[_variableListIndex].name, trim(name));
+    _variableList[_variableListIndex].variable = variable;
+    _variableList[_variableListIndex].type = BOOL;
+    Serial.printf("Bool %s variable added to RemoteControl.\n", trim(name));
+    // Serial.printf("%i: %s = %i\n", _index, _variableNames[_index].c_str(), *_variablePointers[_index]);
+    _variableListIndex++;
+  } else {
+    Serial.printf("Variable %s not controlled. Too many variables controlled.\n", name);
+  }
+}
+
+/**
+ * FUNCTION
+ **/
 void RemoteControl::function(char *name, String (*function)(char *arg)) {
   if (_functionListIndex < MAX_FUNCTIONS_CONTROLLED) {
     // TODO check if name already used
@@ -59,8 +133,7 @@ String RemoteControl::handle(char *message) {
 
 String RemoteControl::_processCommand(char *command) {
   String response = "";
-  char *param, *temp;
-  int value = 0;
+  char *param, *temp, *value;
 
   param = strchr(command, '(');    // check if command is a function call by looking for an open parenthesis
   if (param != NULL) {
@@ -71,13 +144,13 @@ String RemoteControl::_processCommand(char *command) {
       *temp = '\0';
       return _processFunction(command, param);
     }
-    return String(command) + " " + String(param) + ": Invalid function call.\n";    // if no close parenthesis found, it's an invalid function call
+    return "";    // if no close parenthesis found, it's an invalid function call
   }
 
   param = strchr(command, '=');    // check if command is an assignment by looking for an equal sign
   if (param != NULL) {
     *param = '\0';                 // if this is an assignment operation, command holds name of pin/variable
-    value = atoi(trim(++param));
+    value = trim(++param);
   }
   trim(command);
 
@@ -86,7 +159,7 @@ String RemoteControl::_processCommand(char *command) {
     if (strcmp(command, _pinList[i].name) == 0) {
       // Pin match found
       if(_pinList[i].output && param != NULL) {
-        digitalWrite(_pinList[i].pinNumber, value == 0? LOW : HIGH);
+        digitalWrite(_pinList[i].pinNumber, atoi(value) == 0? LOW : HIGH);
       } else {
         // pin match found, not an assignment, return pin value
         response = String(command) + "=" + digitalRead(_pinList[i].pinNumber) + ";\n";
@@ -99,18 +172,29 @@ String RemoteControl::_processCommand(char *command) {
   for (int i=0; i < _variableListIndex; i++) {
     if (strcmp(command, _variableList[i].name) == 0) {
       // Variable match found
-      if(param != NULL) {
-        *_variableList[i].variable = value;    // assign value to variable
+      if(param != NULL) {     // check if command is an assignment
+        switch(_variableList[i].type) {
+          case INT    : *(int *)_variableList[i].variable = atoi(value); break;
+          case FLOAT  : *(float *)_variableList[i].variable = atof(value); break;
+          case CHAR   : *(char *)_variableList[i].variable = value[0]; break;
+          // case CHAR_ARRAY: strcpy((char[] *)_variableList[i].variable, value); break;
+          case STRING : *(String *)_variableList[i].variable = String(value); break;
+          case BOOL   : *(bool *)_variableList[i].variable = (value[0] == '0' || strcmp(value, "false") == 0) ? false : true; break;
+        }        
       } else {
         // variable match found, not an assignment, return variable value
-        response = String(command) + "=" + *_variableList[i].variable + ";\n";
+        switch(_variableList[i].type) {
+          case INT    : response = String(command) + "=" + *(int *)_variableList[i].variable + ";\n"; break;
+          case FLOAT  : response = String(command) + "=" + *(float *)_variableList[i].variable + ";\n"; break;
+          case CHAR   : response = String(command) + "=" + *(char *)_variableList[i].variable + ";\n"; break;
+          case STRING : response = String(command) + "=" + *(String *)_variableList[i].variable + ";\n"; break;
+          case BOOL   : response = String(command) + "=" + *(bool *)_variableList[i].variable + ";\n"; break;
+        }
       }
       return response;
     }
-  }  
-
-  Serial.printf("Command %s not found. Assignment %s. Value = %i.\n", command, param != NULL? "true" : "false", value);
-  return response;
+  } 
+  return "";
 }
 
 String RemoteControl::_processFunction(char *functionName, char *arg) {
@@ -121,7 +205,6 @@ String RemoteControl::_processFunction(char *functionName, char *arg) {
       return _functionList[i].function(arg);
     }
   }
-  Serial.printf("Function %s not found.\n", functionName);
   return "";
 }
 

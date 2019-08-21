@@ -1,8 +1,22 @@
+/**
+ * Upload and send commands like LED = 0, floatvar = 5.6,
+ * mynameis(Bob), and floatvar over serial.
+ * 
+ **/
+
 #include <RemoteControl.h>    // https://github.com/idotuchman/RemoteControl
 
 RemoteControl control;
-int myvar;
+int intvar = 7;
+float floatvar = 3.14;
+char charvar = 'h';
+String stringvar = "hello world";
+bool boolvar = true;
 
+/**
+ * Functions controlled by RemoteControl must return 
+ * a String and receive only a character string argument.
+ **/
 String mynameis(char *arg) {
   return "Hello " + String(arg) + "!\n";
 }
@@ -13,7 +27,11 @@ void setup() {
   Serial.println('\n');
 
   control.pin("LED", LED_BUILTIN, OUTPUT);
-  control.variable("myvar", &myvar);
+  control.variable("intvar", &intvar);
+  control.variable("floatvar", &floatvar);
+  control.variable("charvar", &charvar);
+  control.variable("stringvar", &stringvar);
+  control.variable("boolvar", &boolvar);
   control.function("mynameis", &mynameis);
 }
 
@@ -35,7 +53,7 @@ void loop() {
     command[i] = '\0';
     response = control.handle(command);
     if(response != "") {
-      Serial.printf("Response: %s \n", response.c_str());
+      Serial.printf("%s", response.c_str());
     }    
   }
   delay(0);
