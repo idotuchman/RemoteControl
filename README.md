@@ -39,10 +39,11 @@ loop() {
    ...
 }
 ```
+The ```handle``` method will update I/O pins and variables, and call functions, based on the command received (see below).
 
 ## I/O Pins
 
-The RemoteControl library will set the pin mode as either input or output depending on whether you specify INPUT or OUTPUT in the pin method. To set an I/O pin, send a command with the pin name, an equal sign, either 1 or 0, and an optional semicolon. For example:
+The RemoteControl library will set a pin's mode as either INPUT or OUTPUT depending on whether you specify INPUT or OUTPUT in the pin method. To set an I/O pin, send a command with the pin name, an equal sign, either 1 or 0, and an optional semicolon. For example:
 ```cpp
 LED=1
 ```
@@ -75,7 +76,7 @@ To call a function, send the function name with the character string in parenthe
 The handle method returns a ```String``` with the return value of the function.
 
 ## Multiple Commands
-You can combine multiple commands by separating commands with semicolons (;):
+You can combine multiple commands on a single line by separating commands with semicolons (;):
 ```cpp
 LED=1; mybool = true; mynameis(Bob);
 ```
