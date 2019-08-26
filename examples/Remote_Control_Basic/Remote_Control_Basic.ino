@@ -10,19 +10,25 @@ RemoteControl control;
 int intvar = 7;
 float floatvar = 3.14;
 char charvar = 'h';
-String stringvar = "hello world";
+String name = "?";
 bool boolvar = true;
 
 /**
  * Functions controlled by RemoteControl must return 
  * a String and receive only a character string argument.
+ * Here, the function argument is also handled by
+ * RemoteControl to set name.
+ * 
+ * In this example, sending "hello(name=Bob)" both
+ * calls the hello function and sets name equal to Bob.
  **/
-String mynameis(char *arg) {
-  return "Hello " + String(arg) + "!\n";
+String hello(char *arg) {
+  control.handle(arg);
+  return "Hello " + name + "!\n";
 }
 
 void setup() {
-  Serial.begin(115200);         // Start the Serial communication to send messages to the computer
+  Serial.begin(115200);         // Start serial communication to send/receive messages
   delay(10);
   Serial.println('\n');
 
@@ -30,9 +36,9 @@ void setup() {
   control.variable("intvar", &intvar);
   control.variable("floatvar", &floatvar);
   control.variable("charvar", &charvar);
-  control.variable("stringvar", &stringvar);
+  control.variable("name", &name);
   control.variable("boolvar", &boolvar);
-  control.function("mynameis", &mynameis);
+  control.function("hello", &hello);
 }
 
 void loop() {
@@ -48,12 +54,12 @@ void loop() {
       if (i<30) {
         i++;
       }
-      delay(3);      // wait for serial buffer to fill
+      delay(3);                                 // wait for serial buffer to fill
     }
     command[i] = '\0';
-    response = control.handle(command);
+    response = control.handle(command);         // parse command
     if(response != "") {
-      Serial.printf("%s", response.c_str());
+      Serial.printf("%s", response.c_str());    // print any response from parsing
     }    
   }
   delay(0);
