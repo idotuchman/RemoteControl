@@ -16,11 +16,11 @@ bool boolvar = true;
 /**
  * Functions controlled by RemoteControl must return 
  * a String and receive only a character string argument.
- * Here, the function argument is also handled by
- * RemoteControl to set name.
  * 
- * In this example, sending "hello(name=Bob)" both
- * calls the hello function and sets name equal to Bob.
+ * In this example, the function argument is also handled by
+ * RemoteControl to set the name varaiable. Thus, sending 
+ * "hello(name=Bob)" both calls the hello function and sets 
+ * name equal to Bob.
  **/
 String hello(char *arg) {
   control.handle(arg);
