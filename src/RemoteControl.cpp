@@ -12,7 +12,6 @@ void RemoteControl::pin(char* name, int pinNumber, bool output) {
     _pinList[_pinListIndex].pinNumber = pinNumber;
     _pinList[_pinListIndex].output = output;
     output ? pinMode(pinNumber, OUTPUT) : pinMode(pinNumber, INPUT);
-    Serial.printf("%s pin added to RemoteControl.\n", _pinList[_pinListIndex].name, _pinList[_pinListIndex].pinNumber, _pinList[_pinListIndex].output ? "true" : "false");
     _pinListIndex++;
   } else {
     Serial.printf("Pin %s not controlled. Too many pins controlled.", name);
@@ -28,8 +27,6 @@ void RemoteControl::variable(char *name, int *variable) {
     strcpy(_variableList[_variableListIndex].name, trim(name));
     _variableList[_variableListIndex].variable = variable;
     _variableList[_variableListIndex].type = INT;
-    Serial.printf("Int %s variable added to RemoteControl.\n", trim(name));
-    // Serial.printf("%i: %s = %i\n", _index, _variableNames[_index].c_str(), *_variablePointers[_index]);
     _variableListIndex++;
   } else {
     Serial.printf("Variable %s not controlled. Too many variables controlled.\n", name);
@@ -45,8 +42,6 @@ void RemoteControl::variable(char *name, float *variable) {
     strcpy(_variableList[_variableListIndex].name, trim(name));
     _variableList[_variableListIndex].variable = variable;
     _variableList[_variableListIndex].type = FLOAT;
-    Serial.printf("Float %s variable added to RemoteControl.\n", trim(name));
-    // Serial.printf("%i: %s = %i\n", _index, _variableNames[_index].c_str(), *_variablePointers[_index]);
     _variableListIndex++;
   } else {
     Serial.printf("Variable %s not controlled. Too many variables controlled.\n", name);
@@ -62,8 +57,6 @@ void RemoteControl::variable(char *name, char *variable) {
     strcpy(_variableList[_variableListIndex].name, trim(name));
     _variableList[_variableListIndex].variable = variable;
     _variableList[_variableListIndex].type = CHAR;
-    Serial.printf("Char %s variable added to RemoteControl.\n", trim(name));
-    // Serial.printf("%i: %s = %i\n", _index, _variableNames[_index].c_str(), *_variablePointers[_index]);
     _variableListIndex++;
   } else {
     Serial.printf("Variable %s not controlled. Too many variables controlled.\n", name);
@@ -79,8 +72,6 @@ void RemoteControl::variable(char *name, String *variable) {
     strcpy(_variableList[_variableListIndex].name, trim(name));
     _variableList[_variableListIndex].variable = variable;
     _variableList[_variableListIndex].type = STRING;
-    Serial.printf("String %s variable added to RemoteControl.\n", trim(name));
-    // Serial.printf("%i: %s = %i\n", _index, _variableNames[_index].c_str(), *_variablePointers[_index]);
     _variableListIndex++;
   } else {
     Serial.printf("Variable %s not controlled. Too many variables controlled.\n", name);
@@ -96,8 +87,21 @@ void RemoteControl::variable(char *name, bool *variable) {
     strcpy(_variableList[_variableListIndex].name, trim(name));
     _variableList[_variableListIndex].variable = variable;
     _variableList[_variableListIndex].type = BOOL;
-    Serial.printf("Bool %s variable added to RemoteControl.\n", trim(name));
-    // Serial.printf("%i: %s = %i\n", _index, _variableNames[_index].c_str(), *_variablePointers[_index]);
+    _variableListIndex++;
+  } else {
+    Serial.printf("Variable %s not controlled. Too many variables controlled.\n", name);
+  }
+}
+
+/**
+ * DOUBLE VARIABLE
+ **/
+void RemoteControl::variable(char *name, double *variable) {
+  if (_variableListIndex < MAX_VARIABLES_CONTROLLED) {
+    // TODO check if name already used
+    strcpy(_variableList[_variableListIndex].name, trim(name));
+    _variableList[_variableListIndex].variable = variable;
+    _variableList[_variableListIndex].type = DOUBLE;
     _variableListIndex++;
   } else {
     Serial.printf("Variable %s not controlled. Too many variables controlled.\n", name);
@@ -112,8 +116,6 @@ void RemoteControl::function(char *name, String (*function)(char *arg)) {
     // TODO check if name already used
     strcpy(_functionList[_functionListIndex].name, trim(name));
     _functionList[_functionListIndex].function = function;
-    Serial.printf("%s function added to RemoteControl.\n", trim(name));
-    // Serial.printf("%i: %s = %i\n", _index, _variableNames[_index].c_str(), *_variablePointers[_index]);
     _functionListIndex++;
   } else {
     Serial.printf("Function %s not controlled. Too many functions controlled.\n", name);
@@ -144,7 +146,7 @@ String RemoteControl::_processCommand(char *command) {
       *temp = '\0';
       return _processFunction(command, param);
     }
-    return "";    // if no close parenthesis found, it's an invalid function call
+    return "";    // if no close parenthesis found, it's an invalid function call - do nothing
   }
 
   param = strchr(command, '=');    // check if command is an assignment by looking for an equal sign
@@ -171,7 +173,7 @@ String RemoteControl::_processCommand(char *command) {
   // check if command is in variables array
   for (int i=0; i < _variableListIndex; i++) {
     if (strcmp(command, _variableList[i].name) == 0) {
-      // Variable match found
+      // variable match found
       if(param != NULL) {     // check if command is an assignment
         switch(_variableList[i].type) {
           case INT    : *(int *)_variableList[i].variable = atoi(value); break;
@@ -180,6 +182,7 @@ String RemoteControl::_processCommand(char *command) {
           // case CHAR_ARRAY: strcpy((char[] *)_variableList[i].variable, value); break;
           case STRING : *(String *)_variableList[i].variable = String(value); break;
           case BOOL   : *(bool *)_variableList[i].variable = (value[0] == '0' || strcmp(value, "false") == 0) ? false : true; break;
+          case DOUBLE : *(double *)_variableList[i].variable = atof(value); break;
         }        
       } else {
         // variable match found, not an assignment, return variable value
@@ -189,6 +192,7 @@ String RemoteControl::_processCommand(char *command) {
           case CHAR   : response = String(command) + "=" + *(char *)_variableList[i].variable + ";\n"; break;
           case STRING : response = String(command) + "=" + *(String *)_variableList[i].variable + ";\n"; break;
           case BOOL   : response = String(command) + "=" + *(bool *)_variableList[i].variable + ";\n"; break;
+          case DOUBLE : response = String(command) + "=" + *(double *)_variableList[i].variable + ";\n"; break;
         }
       }
       return response;

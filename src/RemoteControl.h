@@ -35,7 +35,7 @@ const int MAX_NAME_LENGTH = 20;
 const int MAX_PINS_CONTROLLED = 20;
 const int MAX_VARIABLES_CONTROLLED = 10;
 const int MAX_FUNCTIONS_CONTROLLED = 10;
-enum Type {INT, FLOAT, CHAR, CHAR_ARRAY, STRING, BOOL };
+enum Type {INT, FLOAT, CHAR, CHAR_ARRAY, STRING, BOOL, DOUBLE };
 
 class RemoteControl
 {
@@ -48,6 +48,7 @@ class RemoteControl
     // void variable(char *name, char[] *variable);
     void variable(char *name, String *variable);
     void variable(char *name, bool *variable);
+    void variable(char *name, double *variable);
     void function(char *name, String (*function)(char* arg));
     String handle(char *message);
     //void getVariables(void);    //TODO returns a structure of variables and values
