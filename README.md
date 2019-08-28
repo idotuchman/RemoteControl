@@ -81,7 +81,7 @@ To call a function, send the function name with an optional string in parenthesi
 ```cpp
 // Function to call remotely.
 // This function assumes *args will set firstName
-// and lastName to string values.
+// and lastName to String values.
 String hello(char *args) {
   control.handleArgs(args);
   return "Hello " + firstName + " " + lastName + "!";
