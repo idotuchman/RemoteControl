@@ -1,6 +1,10 @@
 /**
- * Upload and send commands like LED = 0, floatvar = 5.6,
- * mynameis(Bob), and floatvar over serial.
+ * Upload and send commands like:
+ * LED = 1;
+ * floatvar = 5.6;
+ * hello(first=Bob, last=Pants);
+ * floatvar;
+ * over the serial monitor.
  * 
  **/
 
@@ -10,21 +14,28 @@ RemoteControl control;
 int intvar = 7;
 float floatvar = 3.14;
 char charvar = 'h';
-String name = "?";
+String first = "";
+String last = "";
 bool boolvar = true;
 
 /**
  * Functions controlled by RemoteControl must return 
  * a String and receive only a character string argument.
  * 
- * In this example, the function argument is also handled by
- * RemoteControl to set the name varaiable. Thus, sending 
- * "hello(name=Bob)" both calls the hello function and sets 
- * name equal to Bob.
+ * Function arguments can be extracted by passing the 
+ * string argument to the handleArgs() method. Multiple 
+ * arguments are separated by commas (,). Make sure the
+ * function arguments are registered.
+ * 
+ * In this example, the hello() function take two 
+ * arguments: first and last. Thus, sending 
+ * "hello(first=SpongeBob, last=SquarePants)" 
+ * calls the hello function and sets the first and 
+ * last variables.
  **/
-String hello(char *arg) {
-  control.handle(arg);
-  return "Hello " + name + "!\n";
+String hello(char *args) {
+  control.handleArgs(args);
+  return "Hello " + first + " " + last + "!\n";
 }
 
 void setup() {
@@ -32,18 +43,20 @@ void setup() {
   delay(10);
   Serial.println('\n');
 
+  // register pins, variables and functions
   control.pin("LED", LED_BUILTIN, OUTPUT);
   control.variable("intvar", &intvar);
   control.variable("floatvar", &floatvar);
   control.variable("charvar", &charvar);
-  control.variable("name", &name);
+  control.variable("first", &first);
+  control.variable("last", &last);
   control.variable("boolvar", &boolvar);
   control.function("hello", &hello);
 }
 
 void loop() {
   String response;
-  char command[30] = "";
+  char command[100] = "";                       // set max command length expected
   int i = 0;
 
   // reply only when you receive data:

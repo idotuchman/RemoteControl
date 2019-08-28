@@ -8,7 +8,7 @@ First, include the RemoteControl library and create an instance of the RemoteCon
 RemoteControl control;
 ```
 
-To control I/O pins, variables, and function calls, use the ```pin```, ```variable```, ```function``` methods respectively in setup(). For example,
+To control I/O pins, variables, and function calls, use the ```pin()```, ```variable()```, ```function()``` methods respectively in ```setup()```. For example,
 
 ```cpp
 int myint;
@@ -19,7 +19,7 @@ String mynameis(char *arg) {
   return "Hello " + String(arg) + "!\n";
 }
 
-setup() {
+void setup() {
    ... 
    control.pin("LED", LED_BUILTIN, OUTPUT);
    control.variable("myint", &myint);
@@ -29,21 +29,27 @@ setup() {
    ...
 }
 ```
-Above, we are controlling the LED_BUILTIN pin, the "myint", "myfloat" and "mybool" variables, and the function "mynameis". The LED_BUILTIN pin is assigned the name "LED" and is specified as an output pin. The RemoteControl library will set the pin mode as an output pin.
+Above, we are controlling the ```LED_BUILTIN``` pin, the ```myint```, ```myfloat``` and ```mybool``` variables, and the function ```mynameis```. The ```LED_BUILTIN``` pin is assigned the name "LED" and is specified as an output pin. The RemoteControl library will set the pin mode as an output pin.
 
-To process an incoming command, use the ```handle``` method.
+To process an incoming command, use the ```handle()``` method.
 ```cpp
-loop() {
+void loop() {
    ...
    control.handle(command);
    ...
 }
 ```
-The ```handle``` method will update I/O pins and variables, and call functions, based on the command received (see below).
+The ```handle()``` method will update I/O pins and variables, and call functions, based on the command received (see below).
+
+### Multiple Commands
+You can combine multiple commands on a single line by separating commands with semicolons (;). For example,
+```cpp
+LED=1; mybool = true; mynameis(Bob);
+```
 
 ## I/O Pins
 
-The RemoteControl library will set a pin's mode as either INPUT or OUTPUT depending on whether you specify INPUT or OUTPUT in the pin method. To set an I/O pin, send a command with the pin name, an equal sign, either 1 or 0, and an optional semicolon. For example:
+RemoteControl will set a pin's mode as either ```INPUT``` or ```OUTPUT``` depending on whether you specify ```INPUT``` or ```OUTPUT``` in the pin method. To set an I/O pin, send a command with the pin name, an equal sign, either 1 or 0, and an optional semicolon. For example:
 ```cpp
 LED=1
 ```
@@ -69,14 +75,31 @@ mybool
 The handle method returns a ```String``` with the variable name, an equal sign, the value of the variable, and a semicolon. For example, the return may be ```mybool=0;```.
 
 ## Functions
-Functions must return a ```String``` and receive only a character string argument (```char *arg```).
+Functions must return a ```String``` and receive a single character string representing zero or more arguments (```char *args```).
 
-To call a function, send the function name with the character string in parenthesis. For example, ```functionName(argument)```.
+To call a function, send the function name with an optional string in parenthesis. For example, ```functionName(arguments)```. To parse the arguments, call the ```handleArgs()``` method within the function. ```handleArgs()``` works just like ```handle()```, except multiple arguments are separated by commas (,) instead of semi-colons. Make sure the function arguments are registered in ```setup()```. For example,
+```cpp
+// function to call remotely
+String hello(char *args) {
+  control.handleArgs(args);
+  return "Hello " + firstName + " " + lastName + "!";
+}
+
+void setup() {
+  ... 
+  control.variable("firstName", &firstName);
+  control.variable("lastName", &lastName);
+  control.function("hello", &hello);
+  ...
+}
+
+void loop() {
+   ...
+   control.handle(command);
+   ...
+}
+// sending hello(firstName=Sponge, lastName=Pants);
+// returns the String "Hello Sponge Pants!"
+```
 
 The handle method returns a ```String``` with the return value of the function.
-
-## Multiple Commands
-You can combine multiple commands on a single line by separating commands with semicolons (;):
-```cpp
-LED=1; mybool = true; mynameis(Bob);
-```

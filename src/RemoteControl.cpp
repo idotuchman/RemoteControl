@@ -122,6 +122,10 @@ void RemoteControl::function(char *name, String (*function)(char *arg)) {
   }
 }
 
+/**
+ * Parse commands to set pins and variables, and call functions.
+ * Multiple commands are separated with semi-colons (;).
+ **/
 String RemoteControl::handle(char *message) {
   char *command;
   String response = "";
@@ -129,6 +133,21 @@ String RemoteControl::handle(char *message) {
   while( command != NULL) {
     response += _processCommand(command);
     command = strtok(NULL, ";");
+  } 
+  return response;
+}
+
+/**
+ * Parse function arguments to set pins and variables, and call functions.
+ * Multiple arguments are separated with commas (,).
+ **/
+String RemoteControl::handleArgs(char *message) {
+  char *command;
+  String response = "";
+  command = strtok(message, ",");       // look for commands delimited with commas
+  while( command != NULL) {
+    response += _processCommand(command);
+    command = strtok(NULL, ",");
   } 
   return response;
 }
