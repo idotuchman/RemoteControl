@@ -39,7 +39,7 @@ void loop() {
    ...
 }
 ```
-The ```handle()``` method will update I/O pins and variables, and call functions, based on the command received (see below).
+The ```handle()``` method will update I/O pins and variables, and call functions based on the command received (see below).
 
 ### Multiple Commands
 You can combine multiple commands on a single line by separating commands with semicolons (;). For example,
@@ -79,7 +79,9 @@ Functions must return a ```String``` and receive a single character string repre
 
 To call a function, send the function name with an optional string in parenthesis. For example, ```functionName(arguments)```. To parse the arguments, call the ```handleArgs()``` method within the function. ```handleArgs()``` works just like ```handle()```, except multiple arguments are separated by commas (,) instead of semi-colons. Make sure the function arguments are registered in ```setup()```. For example,
 ```cpp
-// function to call remotely
+// Function to call remotely.
+// This function assumes *args will set firstName
+// and lastName to string values.
 String hello(char *args) {
   control.handleArgs(args);
   return "Hello " + firstName + " " + lastName + "!";

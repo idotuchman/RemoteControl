@@ -34,6 +34,11 @@ bool boolvar = true;
  * last variables.
  **/
 String hello(char *args) {
+  // set default values
+  first = "Foo";
+  last = "Bar";
+
+  // read function argument(s)
   control.handleArgs(args);
   return "Hello " + first + " " + last + "!\n";
 }
