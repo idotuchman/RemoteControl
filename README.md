@@ -1,6 +1,6 @@
 # RemoteControl
 An Arduino library for basic I/O pin, variable and function call control over communication links (Serial, WebSockets, etc.).
-<p align="center"><img src="https://raw.githubusercontent.com/idotuchman/RemoteControl/master/docs/img/screenshot.jpg?sanitize=true" width="250"></p>
+<p align="center"><img src="https://raw.githubusercontent.com/idotuchman/RemoteControl/master/docs/img/screenshot.jpg" width="250"></p>
 
 # How to use
 First, include the RemoteControl library and create an instance of the RemoteControl class:
