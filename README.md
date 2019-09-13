@@ -22,7 +22,7 @@ String mynameis(char *arg) {
 
 void setup() {
    ... 
-   control.pin("LED", LED_BUILTIN, OUTPUT);
+   control.pin("led", LED_BUILTIN, OUTPUT);
    control.variable("myint", &myint);
    control.variable("myfloat", &myfloat);
    control.variable("mybool", &mybool);
@@ -30,7 +30,7 @@ void setup() {
    ...
 }
 ```
-Above, we are controlling the ```LED_BUILTIN``` pin, the ```myint```, ```myfloat``` and ```mybool``` variables, and the function ```mynameis```. The ```LED_BUILTIN``` pin is assigned the name "LED" and is specified as an output pin. The RemoteControl library will set the pin mode as an output pin.
+Above, we are controlling the ```LED_BUILTIN``` pin, the ```myint```, ```myfloat``` and ```mybool``` variables, and the function ```mynameis```. The ```LED_BUILTIN``` pin is assigned the name "led" and is specified as an output pin. The RemoteControl library will set the pin mode as an output pin.
 
 To process an incoming command, use the ```handle()``` method.
 ```cpp
