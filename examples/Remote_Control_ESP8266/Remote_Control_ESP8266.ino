@@ -95,13 +95,14 @@ void setupWifi() {
  * Function arguments can be extracted by passing the 
  * string argument to the handleArgs() method. Multiple 
  * arguments are separated by commas (,). Make sure the
- * function arguments are registered.
+ * function arguments are registered with RemoteControl.
  * 
- * In this example, the hello() function take two 
+ * In this example, the hello() function takes two 
  * arguments: first and last. Thus, sending 
  * "hello(first=SpongeBob, last=SquarePants)" 
  * calls the hello function and sets the first and 
- * last variables.
+ * last variables to SpongeBob and SquarePants, 
+ * respectively.
  **/
 String hello(char *args) {
   // set default values
