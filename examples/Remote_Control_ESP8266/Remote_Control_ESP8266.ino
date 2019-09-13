@@ -1,4 +1,4 @@
-/***
+/**
  * This is an example of the Remote Control library used with an ESP8266
  * and websocket to control I/O pins, variables and function calls.
  * 

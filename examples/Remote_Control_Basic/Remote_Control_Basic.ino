@@ -1,4 +1,4 @@
-/***
+/**
  * This is an example of the Remote Control library used with an Arduino
  * programmable device and a serial monitor to control I/O pins, variables 
  * and function calls.
