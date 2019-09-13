@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>WebsSocket Console</title>
+</head>
+
+<body>
+  <div class="container">
+    <div class="connection">      
+      <strong>WebSocket </strong><span id="connectionStatus"> </span>
+      <div class="connection-input">
+        <input type="text" id="ipAddress">
+        <input onclick="connect()" class="button" type="submit" value="Connect" id="connectButton">
+        <input onclick="disconnect()" class="button" type="submit" value="Disconnect" id="disconnectButton">
+        <input onclick="clearTables()" class="button" type="submit" value="Clear" id="clearButton">
+      </div>
+    </div>
+    <div class="receive">
+      <div class="send-input">
+        <input type="text" placeholder="Enter outgoing message" id="newMessage">
+        <input onclick="sendMessage()" class="button-primary" type="submit" value="Send" id="sendButton">
+      </div>
+      <p class="label">RECEIVED MESSAGES</p>
+      <div class="box">
+        <table id="receivedMessages"></table>
+      </div>
+    </div>
+    <div class="send">
+      <p class="label">SENT MESSAGES</p>
+      <div class="box">
+        <table id="sentMessages"></table>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,160 @@
+html,body
+{
+    height:100%;
+}
+
+.container {
+  display: grid;
+  max-width: var(--grid-max-width);
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-rows: auto 80vh;
+  grid-template-areas:
+    'connection connection connection'
+    'receive receive send';
+  grid-gap: 20px 20px;
+  padding: 10px;
+  margin: 0 auto;
+}
+
+.send,
+.receive {
+  display: flex;
+  flex-direction: column;
+  /* height: 80vh; */
+}
+
+.label {
+  margin: 0;
+  font-size: .7em;
+}
+
+.box {
+  height: 100%;
+  border: 1px solid var(--border-color-softer);
+  border-radius: 4px;
+  box-shadow: none;
+  box-sizing: border-box;  
+  overflow-y: auto;
+}
+
+.connection {
+  grid-area: connection;
+}
+
+.connection-input {  
+  display: flex;
+}
+
+#ipAddress {
+  font-size: .9em;
+  flex: auto;
+  margin: 0 5px 0 0;
+}
+
+#connectButton {
+  flex: initial;
+  margin: 0 5px 0 0;
+}
+
+#disconnectButton {
+  flex: initial;
+  margin: 0 5px 0 0;
+}
+
+#clearButton {
+  flex: initial;
+  margin: 0;
+}
+
+.status {
+  margin-bottom: 20px;
+}
+
+#connectionStatus {
+  font-weight: bold;
+}
+
+.send {
+  grid-area: send;
+}
+
+.send-input {
+  display: flex;
+}
+
+#sendButton {
+  flex: initial;
+  margin: 0;
+}
+
+#newMessage {
+  flex: auto;
+  font-size: .9em;
+  margin: 0 5px 20px 0;
+}
+
+#sentMessages {
+  flex: auto;
+  resize: none;
+  font-size: .8em;
+}
+
+#receivedMessages {
+  font-size: .8em;
+  /* border: 1px solid var(--border-color-softer); */
+  /* border-radius: 4px;
+  box-shadow: none;
+  box-sizing: border-box;  */
+}
+
+tr, td {
+  padding: 0;
+  margin: 0;
+  border: 0;
+}
+
+tr:nth-child(even) {
+ background-color: #f2f2f2;
+}
+
+tr:hover {
+  background-color: #ddd;
+}
+
+table {
+  background-color: var(--background-color);
+  width: 100%;
+}
+
+.receive {
+  grid-area: receive;
+}
+
+input.button-disabled {
+  border: 1px solid #999999;
+  background-color: #cccccc;
+  color: #666666;
+  cursor: not-allowed;
+}
+
+.hidden {
+  visibility: hidden;
+}
+
+@media (max-width: 600px) {
+  .container {    
+    grid-template-rows: auto 50vh 30vh;
+    grid-template-areas:
+      'connection connection connection'
+      'receive receive receive'
+      'send send send';
+  }
+  
+  .connection-input {  
+    flex-wrap: wrap;
+  }
+  
+  #ipAddress {
+    margin: 0 5px 5px 0;
+  }
+}
