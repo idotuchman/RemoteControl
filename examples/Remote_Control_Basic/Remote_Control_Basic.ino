@@ -1,11 +1,11 @@
-/**
- * Upload and send commands like:
- * LED = 1;
- * floatvar = 5.6;
- * hello(first=Bob, last=Pants);
- * floatvar;
- * over the serial monitor.
+/***
+ * This is an example of the Remote Control library used with an Arduino
+ * programmable device and a serial monitor to control I/O pins, variables 
+ * and function calls.
  * 
+ * After loading the sketch, open up are arduino serial monitor and send 
+ * messages like: "led=1", "led=0", "floatvar" and 
+ * "hello(first=Bob, last=Pants);" 
  **/
 
 #include <RemoteControl.h>    // https://github.com/idotuchman/RemoteControl
@@ -44,12 +44,11 @@ String hello(char *args) {
 }
 
 void setup() {
-  Serial.begin(115200);         // Start serial communication to send/receive messages
-  delay(10);
+  Serial.begin(9600);         // Start serial communication to send/receive messages
   Serial.println('\n');
 
-  // register pins, variables and functions
-  control.pin("LED", LED_BUILTIN, OUTPUT);
+  // register I/O pins, variables and functions for RemoteControl to control
+  control.pin("led", LED_BUILTIN, OUTPUT);
   control.variable("intvar", &intvar);
   control.variable("floatvar", &floatvar);
   control.variable("charvar", &charvar);
@@ -57,6 +56,7 @@ void setup() {
   control.variable("last", &last);
   control.variable("boolvar", &boolvar);
   control.function("hello", &hello);
+  Serial.println("Remote Control started. Ready to receive commands.");
 }
 
 void loop() {
